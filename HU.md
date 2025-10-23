@@ -3,71 +3,80 @@
 ## 📋 **Historias de Usuario**
 
 ---
-### **HU-001: Registro Completo de Ventas** 
+### **HU-000: Login y Acceso Multi-Usuario** 🔐
+**Como** miembro del equipo BOCETTOS,  
+**Quiero** ingresar con mi usuario desde cualquier dispositivo (PC, tablet, móvil),  
+**Para** registrar ventas desde múltiples ubicaciones sin depender de una sola máquina como el Excel actual.
+
+---
+
+### **HU-001: Registro Rápido de Ventas** 📝
 **Como** vendedor,  
-**Quiero** registrar una venta con todos los datos necesarios (producto, precio, cliente, medio de compra, tipo de entrega, comprobante, tracking, medio de pago),  
-**Para** tener toda la información sin llenar 20 columnas de Excel.
+**Quiero** llenar un formulario simple con los campos del Excel (producto, precio, cliente, ubicación, medio de pago),  
+**Para** registrar ventas en 2 minutos vs 5+ minutos llenando 20 columnas de Excel.
 
 ---
 
-### **HU-002: Selección de Ubicación** 
+### **HU-002: Seleccionar Ubicación** 📍
 **Como** vendedor,  
-**Quiero** seleccionar mi ubicación actual (Tienda/Feria/Stand),  
-**Para** que mis ventas se etiqueten correctamente.
+**Quiero** elegir mi ubicación (Tienda/Feria/Stand) desde un dropdown,  
+**Para** no escribir manualmente la ubicación en cada venta.
 
 ---
 
-### **HU-003: Validación de Datos** 
-**Como** usuario,  
-**Quiero** que el sistema valide campos obligatorios y muestre errores claros,  
-**Para** asegurar que registro datos completos y correctos.
-
----
-### **HU-004: Exportar Ventas por Ubicación** 
+### **HU-003: Validar Datos Automáticamente** ✅
 **Como** vendedor,  
-**Quiero** descargar un CSV con las ventas de mi ubicación,  
-**Para** compartir mis datos con el equipo central.
+**Quiero** que me avise inmediatamente si faltan campos obligatorios,  
+**Para** no guardar ventas incompletas como pasa en Excel.
 
 ---
-### **HU-005: Importar y Consolidar Ventas** 
+
+### **HU-004: Exportar CSV por Ubicación** 📤
+**Como** vendedor,  
+**Quiero** descargar mis ventas en CSV filtradas por mi ubicación,  
+**Para** enviar reportes sin copiar datos manualmente del Excel compartido.
+
+---
+
+### **HU-005: Consolidar Ventas de Todas las Ubicaciones** 📥
 **Como** administrador,  
-**Quiero** importar archivos CSV de las 3 ubicaciones,  
-**Para** consolidar todas las ventas y ver estadísticas totales.
+**Quiero** importar los CSV de las 3 ubicaciones en una vista unificada,  
+**Para** ver ventas totales sin manejar múltiples archivos Excel.
 
 ---
-### **HU-006: Dashboard de Estadísticas** 
+
+### **HU-006: Dashboard de Ventas** 📊
 **Como** dueño,  
-**Quiero** ver un dashboard con ventas totales, ventas por ubicación y top productos,  
-**Para** tomar decisiones de negocio sin crear fórmulas.
+**Quiero** ver ventas del día, productos top y ingresos por ubicación en pantalla,  
+**Para** tomar decisiones sin crear fórmulas complejas en Excel.
 
 ---
 
-### **HU-007: Historial de Ventas** 
-**Como** usuario,  
-**Quiero** ver un listado de todas las ventas registradas,  
-**Para** consultar transacciones pasadas y hacer seguimiento.
+### **HU-007: Ver Historial de Ventas** 📖
+**Como** vendedor,  
+**Quiero** consultar todas mis ventas anteriores en una lista,  
+**Para** revisar transacciones sin buscar en cientos de filas de Excel.
 
 ---
 
-### **HU-008: Análisis de Clientes Frecuentes** 
+### **HU-008: Identificar Clientes VIP** 👥
 **Como** dueño,  
-**Quiero** ver una lista de clientes que más compran,  
-**Para** identificar clientes VIP y crear estrategias de fidelización.
+**Quiero** ver qué clientes compran más seguido y gastan más,  
+**Para** crear estrategias de fidelización basadas en datos reales.
 
 ---
 
-### **HU-009: Búsqueda y Filtros** 
-**Como** usuario,  
+### **HU-009: Buscar Ventas Rápidamente** 🔍
+**Como** vendedor,  
 **Quiero** buscar ventas por cliente, producto o fecha,  
-**Para** encontrar información específica rápidamente.
+**Para** encontrar información en segundos vs revisar todo el Excel.
 
 ---
 
-### **HU-010: Dashboard Web con Sincronización en Tiempo Real** 
+### **HU-010: Sincronización Entre Dispositivos** 🌐
 **Como** miembro del equipo,  
-**Quiero** acceder a un dashboard web donde vea todas las ventas actualizándose en tiempo real,  
-**Para** no depender de archivos y trabajar desde cualquier dispositivo.
+**Quiero** que mis ventas se sincronicen con los otros dispositivos del equipo,  
+**Para** que todos veamos los mismos datos actualizados sin enviar archivos por WhatsApp.
 
 ---
-
 

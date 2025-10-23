@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BOCETTOS - Sistema de Ventas</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Inter+Tight:ital,wght@0,100..900;1,100..900&family=Outfit:wght@100..900&family=Saira:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'sans': ['DM Sans', 'Inter Tight', 'Outfit', 'Saira', 'ui-sans-serif', 'system-ui'],
+                        'dm': ['DM Sans', 'sans-serif'],
+                        'inter': ['Inter Tight', 'sans-serif'],
+                        'outfit': ['Outfit', 'sans-serif'],
+                        'saira': ['Saira', 'sans-serif']
+                    },
+                    colors: {
+                        'bocettos': {
+                            'primary': '#2563eb',
+                            'secondary': '#6b7280',
+                            'success': '#059669',
+                            'warning': '#f59e0b',
+                            'danger': '#dc2626'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="src/css/styles.css">
+</head>
+<body class="min-h-screen bg-white flex items-center justify-center p-4">
+    <div class="max-w-4xl mx-auto text-center">
+        <!-- Logo Principal -->
+        <div class="mb-12">
+            <div class="mb-4">
+                <img src="src/Bocettos.png" alt="BOCETTOS" class="mx-auto h-24 w-auto logo-bocettos">
+            </div>
+        </div>
+
+        <!-- Acciones Principales -->
+        <div class="bg-white rounded-2xl shadow-2xl p-8 mb-8">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">Acceso al Sistema</h2>
+            
+            <div class="flex justify-center">
+                <!-- Login -->
+                <div class="border-2 border-bocettos-primary rounded-xl p-6 hover:shadow-lg transition-shadow duration-200 max-w-md">
+                    <div class="text-5xl mb-4">🔐</div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-3">Iniciar Sesión</h3>
+                    <p class="text-gray-600 mb-4">Acceda al sistema con sus credenciales</p>
+                    <a 
+                        href="src/login.html"
+                        class="inline-block bg-bocettos-primary hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 transform hover:scale-105"
+                    >
+                        Ir al Login
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="text-center text-gray-600 text-sm">
+            <p>&copy; 2025 BOCETTOS - Sistema de Gestión de Ventas</p>
+        </div>
+    </div>
+
+    <script>
+        // Verificar si ya hay una sesión activa y redirigir
+        const sesionActiva = localStorage.getItem('bocettos_usuario');
+        if (sesionActiva) {
+            // Redirigir automáticamente al dashboard
+            window.location.href = 'src/dashboard.html';
+        }
+    </script>
+</body>
+</html>

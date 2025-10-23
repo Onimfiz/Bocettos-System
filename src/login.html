@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BOCETTOS - Login</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Inter+Tight:ital,wght@0,100..900;1,100..900&family=Outfit:wght@100..900&family=Saira:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'sans': ['DM Sans', 'Inter Tight', 'Outfit', 'Saira', 'ui-sans-serif', 'system-ui'],
+                        'dm': ['DM Sans', 'sans-serif'],
+                        'inter': ['Inter Tight', 'sans-serif'],
+                        'outfit': ['Outfit', 'sans-serif'],
+                        'saira': ['Saira', 'sans-serif']
+                    },
+                    colors: {
+                        'bocettos': {
+                            'primary': '#2563eb',
+                            'secondary': '#6b7280',
+                            'success': '#059669',
+                            'warning': '#f59e0b',
+                            'danger': '#dc2626'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="min-h-screen bg-white flex items-center justify-center p-4">
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="fixed inset-0 bg-white flex items-center justify-center z-50">
+        <div class="text-center text-gray-800">
+            <div class="mb-6">
+                <img src="Bocettos.png" alt="BOCETTOS" class="mx-auto h-16 w-auto logo-bocettos">
+            </div>
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-bocettos-primary mx-auto mb-4"></div>
+            <p class="text-lg opacity-90">Cargando sistema...</p>
+        </div>
+    </div>
+
+    <!-- Login Container -->
+    <div id="login-container" class="hidden w-full max-w-md">
+        <!-- Logo Header -->
+        <div class="text-center mb-8">
+            <div class="mb-4">
+                <img src="Bocettos.png" alt="BOCETTOS" class="mx-auto h-20 w-auto logo-bocettos">
+            </div>
+            <p class="text-xl text-gray-700 font-dm">Sistema de Gestión de Ventas</p>
+        </div>
+
+        <!-- Login Form -->
+        <div class="bg-white rounded-2xl shadow-2xl p-8 backdrop-blur-sm">
+            <form id="login-form" class="space-y-6">
+                <div class="text-center mb-6">
+                    <h2 class="text-2xl font-semibold text-gray-800 font-saira">Iniciar Sesión</h2>
+                </div>
+
+                <!-- Usuario Field -->
+                <div>
+                    <label for="username" class="block text-sm font-medium text-gray-700 mb-2">Usuario:</label>
+                    <input 
+                        type="text" 
+                        id="username" 
+                        name="username"
+                        required
+                        autocomplete="username"
+                        placeholder="Ingrese su usuario"
+                        class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-bocettos-primary focus:border-bocettos-primary transition-colors duration-200 text-gray-800"
+                    >
+                </div>
+
+                <!-- Password Field -->
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-700 mb-2">Contraseña:</label>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        name="password"
+                        required
+                        autocomplete="current-password"
+                        placeholder="Ingrese su contraseña"
+                        class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-bocettos-primary focus:border-bocettos-primary transition-colors duration-200 text-gray-800"
+                    >
+                </div>
+
+                <!-- Login Button -->
+                <button 
+                    type="submit" 
+                    id="login-btn"
+                    class="w-full text-white font-semibold py-3 px-4 rounded-lg transition-all duration-200 transform hover:scale-105 focus:ring-4 focus:ring-gray-300 focus:outline-none"
+                    style="background-color: #4a4a4b;"
+                >
+                    <span id="btn-text">INGRESAR</span>
+                    <span id="btn-loading" class="hidden">
+                        <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Validando...
+                    </span>
+                </button>
+            </form>
+        </div>
+
+        <!-- Footer -->
+        <div class="text-center mt-8">
+            <p class="text-gray-600 text-sm">
+                © 2025 BOCETTOS - Sistema de Gestión de Ventas 
+            </p>
+        </div>
+    </div>
+
+    <!-- Error Message -->
+    <div id="error-message" class="hidden fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 transform transition-transform duration-300">
+        <div class="flex items-center">
+            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+            </svg>
+            <span id="error-text">Error en las credenciales</span>
+        </div>
+    </div>
+
+    <!-- Success Message -->
+    <div id="success-message" class="hidden fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 transform transition-transform duration-300">
+        <div class="flex items-center">
+            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+            </svg>
+            <span id="success-text">Login exitoso</span>
+        </div>
+    </div>
+
+    <script src="js/login.js"></script>
+</body>
+</html>

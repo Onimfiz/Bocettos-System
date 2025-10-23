@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Control - BOCETTOS Sistema de Ventas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'bocettos-primary': '#4a4a4b',
+                    },
+                    fontFamily: {
+                        'dm': ['DM Sans', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body class="bg-gray-50 font-dm">
+    <script>
+        if (!localStorage.getItem('bocettos_usuario')) {
+            window.location.href = 'login.html';
+        }
+    </script>
+
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <div class="flex items-center">
+                        <img src="Bocettos.png" alt="BOCETTOS" class="h-8 w-auto mr-3">
+                        <span class="text-lg font-bold text-bocettos-primary font-dm">Sistema de Ventas</span>
+                    </div>
+                    <div class="ml-4 text-gray-600">
+                        <span class="text-sm">Panel de Control</span>
+                    </div>
+                </div>
+
+                <div class="flex items-center space-x-4">
+                    <div class="text-sm text-gray-600" id="usuario-info">
+                        <span class="font-medium" id="usuario-nombre">Usuario</span>
+                        <span class="text-gray-400">•</span>
+                        <span id="usuario-ubicacion">Ubicación</span>
+                    </div>
+                    <div class="text-xs text-gray-500" id="fecha-hora">
+
+                    </div>
+                    <button 
+                        id="logout-btn"
+                        class="text-gray-500 hover:text-gray-700 transition-colors duration-200"
+                        title="Cerrar Sesión"
+                    >
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navegación -->
+    <nav class="bg-white border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex space-x-8">
+                <a href="#" class="dashboard-nav-active border-b-2 border-bocettos-primary py-4 px-1 text-sm font-medium text-bocettos-primary">
+                    📊 Resumen
+                </a>
+                <a href="formulario-ventas.html" class="dashboard-nav-link border-b-2 border-transparent py-4 px-1 text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300">
+                    📝 Nueva Venta
+                </a>
+                <a href="historial.html" class="dashboard-nav-link border-b-2 border-transparent py-4 px-1 text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300">
+                    📖 Historial
+                </a>
+                <a href="#" class="dashboard-nav-link border-b-2 border-transparent py-4 px-1 text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300" id="admin-link" style="display: none;">
+                    ⚙️ Administración
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenido Principal -->
+    <main class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            
+            <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow duration-200">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">💰 Mis Ventas Hoy</p>
+                        <p class="text-3xl font-bold" style="color: #0a1219;" id="ventas-hoy">S/ 0.00</p>
+                        <p class="text-sm text-gray-500" id="variacion-hoy">
+                            <span class="text-green-500">📈 +0%</span> vs ayer
+                        </p>
+                    </div>
+                    <div class="text-4xl">💰</div>
+                </div>
+                <div class="mt-4">
+                    <button class="text-sm text-bocettos-primary hover:underline" onclick="verDetalleVentas('hoy')">
+                        Ver Detalle
+                    </button>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow duration-200">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">📈 Mi Total Mes</p>
+                        <p class="text-3xl font-bold" style="color: #0a1219;" id="ventas-mes">S/ 0.00</p>
+                        <p class="text-sm text-gray-500" id="variacion-mes">
+                            <span class="text-blue-500">📈 +0%</span> vs anterior
+                        </p>
+                    </div>
+                    <div class="text-4xl">📈</div>
+                </div>
+                <div class="mt-4">
+                    <button class="text-sm text-bocettos-primary hover:underline" onclick="verDetalleVentas('mes')">
+                        Ver Histórico
+                    </button>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow duration-200">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">📦 Productos Hoy</p>
+                        <p class="text-3xl font-bold" style="color: #0a1219;" id="productos-hoy">0</p>
+                        <p class="text-sm text-gray-500">unidades</p>
+                    </div>
+                    <div class="text-4xl">📦</div>
+                </div>
+                <div class="mt-4">
+                    <button class="text-sm text-bocettos-primary hover:underline" onclick="verDetalleVentas('productos')">
+                        Ver Lista
+                    </button>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow duration-200">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">👥 Clientes</p>
+                        <p class="text-3xl font-bold" style="color: #0a1219;" id="clientes-unicos">0</p>
+                        <p class="text-sm text-gray-500">únicos</p>
+                    </div>
+                    <div class="text-4xl">👥</div>
+                </div>
+                <div class="mt-4">
+                    <button class="text-sm text-bocettos-primary hover:underline" onclick="verDetalleVentas('clientes')">
+                        Ver Todos
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                    📈 Mis Ventas - Últimos 7 Días
+                </h3>
+                <div class="h-64">
+                    <canvas id="grafico-semanal"></canvas>
+                </div>
+                <div class="mt-4 pt-4 border-t border-gray-200">
+                    <p class="text-sm font-medium text-gray-600">
+                        Total Semana: <span class="text-green-600 font-bold" id="total-semana">S/ 0.00</span>
+                    </p>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                    🎯 Mis Top 5 Productos
+                </h3>
+                <div class="space-y-3" id="top-productos">
+                   
+                </div>
+                <div class="mt-4">
+                    <button class="text-sm text-bocettos-primary hover:underline" onclick="verAnalisisCompleto()">
+                        📊 Ver Análisis Completo
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Últimas ventas -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-lg font-semibold text-gray-800 flex items-center">
+                    📋 Mis Últimas Ventas
+                </h3>
+                <button 
+                    onclick="window.location.href='formulario-ventas.html'"
+                    class="px-4 py-2 text-white rounded-lg text-sm font-medium transition-colors duration-200 flex items-center space-x-2"
+                    style="background-color: #4a4a4b;"
+                >
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                    </svg>
+                    <span>Nueva Venta</span>
+                </button>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Hora</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Producto</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cliente</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cantidad</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200" id="tabla-ultimas-ventas">
+                      
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="sin-ventas" class="text-center py-8" style="display: none;">
+                <div class="text-gray-400 text-6xl mb-4">📊</div>
+                <h3 class="text-lg font-medium text-gray-900 mb-2">¡Comienza a vender!</h3>
+                <p class="text-gray-500 mb-6">Aún no tienes ventas registradas. Crea tu primera venta para ver estadísticas aquí.</p>
+                <button 
+                    onclick="window.location.href='formulario-ventas.html'"
+                    class="px-6 py-3 text-white rounded-lg font-medium transition-colors duration-200"
+                    style="background-color: #4a4a4b;"
+                >
+                    📝 Registrar Primera Venta
+                </button>
+            </div>
+        </div>
+
+        <div class="mt-8 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-6 border border-blue-200">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h4 class="text-lg font-semibold text-gray-800 mb-2">🎯 Mi Objetivo del Mes</h4>
+                    <p class="text-sm text-gray-600" id="objetivo-descripcion">
+                        Meta: <span class="font-bold">S/ 600.00</span> • 
+                        Actual: <span class="font-bold text-green-600" id="objetivo-actual">S/ 0.00</span> • 
+                        Faltan: <span class="font-bold text-orange-600" id="objetivo-faltante">S/ 600.00</span>
+                    </p>
+                </div>
+                <div class="text-right">
+                    <div class="text-2xl font-bold text-blue-600" id="objetivo-porcentaje">0%</div>
+                    <div class="text-sm text-gray-500">completado</div>
+                </div>
+            </div>
+            <div class="mt-4">
+                <div class="bg-gray-200 rounded-full h-2">
+                    <div class="bg-blue-500 h-2 rounded-full transition-all duration-500" id="barra-progreso" style="width: 0%"></div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Notificaciones -->
+    <div id="notificacion" class="fixed top-4 right-4 z-50 transform translate-x-full transition-transform duration-300">
+        <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-4 max-w-sm">
+            <div class="flex items-center space-x-3">
+                <div id="notificacion-icono" class="text-2xl"></div>
+                <div id="notificacion-mensaje" class="text-sm font-medium text-gray-800"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/dashboard.js"></script>
+</body>
+</html>

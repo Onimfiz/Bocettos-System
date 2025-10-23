@@ -1,0 +1,49 @@
+/* Estilos personalizados para el sistema BOCETTOS */
+
+/* ===== ESTILOS DE LOGIN ===== */
+#login-btn:hover {
+    background-color: #3a3a3b !important;
+}
+
+/* Estilos para el logo BOCETTOS */
+.logo-bocettos {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    background: transparent;
+    border: none;
+    outline: none;
+}
+
+/* Alternativa: mezclar con el fondo */
+.logo-blend {
+    mix-blend-mode: multiply;
+    opacity: 0.95;
+}
+
+/* ===== ESTILOS DE FORMULARIO DE VENTAS ===== */
+/* Estilos para botones del header */
+#admin-btn:hover, #logout-btn:hover {
+    background-color: #3a3a3b !important;
+}
+
+/* Estilos para botones eliminar */
+.btn-eliminar {
+    background-color: #4a4a4b !important;
+}
+
+.btn-eliminar:hover {
+    background-color: #3a3a3b !important;
+}
+
+/* Estilo para caja total */
+.caja-total {
+    background: linear-gradient(to right, #4a4a4b, #5a5a5c) !important;
+}
+
+/* ===== ESTILOS GLOBALES ===== */
+.logo-bocettos-white {
+    background: transparent;
+    border-radius: 8px;
+    padding: 8px;
+}
