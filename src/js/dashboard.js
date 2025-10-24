@@ -42,11 +42,51 @@ function cargarVentas() {
 
 function actualizarDatos() {
     cargarVentas();
-    const hoy = new Date().toDateString();
     
-    // Ventas de hoy
-    const ventasHoy = ventas.filter(v => new Date(v.fecha).toDateString() === hoy);
+    // Calcular fecha actual en zona horaria local
+    const ahora = new Date();
+    const año = ahora.getFullYear();
+    const mes = String(ahora.getMonth() + 1).padStart(2, '0');
+    const dia = String(ahora.getDate()).padStart(2, '0');
+    const hoy = `${año}-${mes}-${dia}`;
+    
+    console.log('=== DEBUG DASHBOARD ===');
+    console.log('Fecha de hoy (local):', hoy);
+    console.log('Fecha del sistema:', ahora);
+    console.log('Total de ventas:', ventas.length);
+    console.log('Todas las ventas:', ventas);
+    
+    if (ventas.length > 0) {
+        ventas.forEach((venta, index) => {
+            console.log(`Venta ${index}:`, {
+                fecha: venta.fecha,
+                cliente: venta.cliente,
+                total: venta.total,
+                coincide: venta.fecha === hoy
+            });
+        });
+    }
+    
+    // Ventas de hoy - múltiples métodos de comparación
+    const ventasHoy = ventas.filter(v => {
+        const fechaVenta = v.fecha;
+        const comparacion1 = fechaVenta === hoy;
+        const comparacion2 = fechaVenta && fechaVenta.startsWith(hoy);
+        const comparacion3 = new Date(fechaVenta).toISOString().split('T')[0] === hoy;
+        
+        console.log(`Comparando venta: ${fechaVenta}`);
+        console.log(`  Método 1 (===): ${comparacion1}`);
+        console.log(`  Método 2 (startsWith): ${comparacion2}`);
+        console.log(`  Método 3 (Date parse): ${comparacion3}`);
+        
+        return comparacion1 || comparacion2 || comparacion3;
+    });
     const totalHoy = ventasHoy.reduce((sum, v) => sum + v.total, 0);
+    
+    console.log('Ventas de hoy encontradas:', ventasHoy.length);
+    console.log('Ventas de hoy:', ventasHoy);
+    console.log('Total de hoy:', totalHoy);
+    console.log('========================');
     
     // Productos de hoy
     const productosHoy = ventasHoy.reduce((sum, v) => 
@@ -57,7 +97,11 @@ function actualizarDatos() {
     
     // Total del mes
     const mesActual = new Date().getMonth();
-    const ventasMes = ventas.filter(v => new Date(v.fecha).getMonth() === mesActual);
+    const añoActual = new Date().getFullYear();
+    const ventasMes = ventas.filter(v => {
+        const fechaVenta = new Date(v.fecha);
+        return fechaVenta.getMonth() === mesActual && fechaVenta.getFullYear() === añoActual;
+    });
     const totalMes = ventasMes.reduce((sum, v) => sum + v.total, 0);
     
     // Actualizar interfaz
@@ -89,9 +133,13 @@ function mostrarGraficoSemanal() {
         const fecha = new Date();
         fecha.setDate(fecha.getDate() - i);
         
-        const ventasDia = ventas.filter(v => 
-            new Date(v.fecha).toDateString() === fecha.toDateString()
-        );
+        // Usar zona horaria local para la fecha
+        const año = fecha.getFullYear();
+        const mes = String(fecha.getMonth() + 1).padStart(2, '0');
+        const dia = String(fecha.getDate()).padStart(2, '0');
+        const fechaStr = `${año}-${mes}-${dia}`;
+        
+        const ventasDia = ventas.filter(v => v.fecha === fechaStr);
         const total = ventasDia.reduce((sum, v) => sum + v.total, 0);
         
         ventasSemana.push(total);
@@ -149,36 +197,53 @@ function mostrarGraficoSemanal() {
 }
 
 function mostrarTopProductos() {
-    const productos = {};
-    ventas.forEach(v => {
-        v.productos.forEach(p => {
-            productos[p.nombre] = (productos[p.nombre] || 0) + p.cantidad;
-        });
+    const canales = {};
+    
+    ventas.forEach(venta => {
+        if (venta.canalVenta) {
+            canales[venta.canalVenta] = (canales[venta.canalVenta] || 0) + 1;
+        }
     });
     
-    const top = Object.entries(productos)
+    const topCanales = Object.entries(canales)
         .sort((a, b) => b[1] - a[1])
         .slice(0, 5);
     
-    const emojis = ['🥇', '🥈', '🥉', '4️⃣', '5️⃣'];
+    const iconosCanales = {
+        'web': '🌐',
+        'instagram': '📱', 
+        'whatsapp': '💬',
+        'feria': '🎪',
+        'stand': '🏪'
+    };
+    
+    const nombresCanales = {
+        'web': 'Página Web',
+        'instagram': 'Instagram',
+        'whatsapp': 'WhatsApp', 
+        'feria': 'Feria',
+        'stand': 'Stand Barranco'
+    };
+    
     let html = '';
     
-    top.forEach(([nombre, cantidad], i) => {
+    topCanales.forEach(([canal, cantidad], i) => {
+        const porcentaje = ventas.length > 0 ? Math.round((cantidad / ventas.length) * 100) : 0;
         html += `
             <div class="flex items-center justify-between p-3 bg-gray-50 rounded">
                 <div class="flex items-center space-x-3">
-                    <span>${emojis[i]}</span>
+                    <span class="text-xl">${iconosCanales[canal] || '📊'}</span>
                     <div>
-                        <div class="font-medium">${nombre}</div>
-                        <div class="text-sm text-gray-500">${cantidad} uds.</div>
+                        <div class="font-medium">${nombresCanales[canal] || canal}</div>
+                        <div class="text-sm text-gray-500">${cantidad} ventas (${porcentaje}%)</div>
                     </div>
                 </div>
             </div>
         `;
     });
     
-    document.getElementById('top-productos').innerHTML = html || 
-        '<div class="text-center py-4 text-gray-500">Sin productos aún</div>';
+    document.getElementById('canales-venta').innerHTML = html || 
+        '<div class="text-center py-4 text-gray-500">Sin datos de canales aún</div>';
 }
 
 function mostrarUltimasVentas(ventasRecientes) {

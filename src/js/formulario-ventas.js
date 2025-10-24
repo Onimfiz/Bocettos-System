@@ -22,8 +22,17 @@ function verificarAutenticacion() {
 }
 
 function inicializarFormulario() {
-    const hoy = new Date().toISOString().split('T')[0];
-    document.getElementById('fecha-venta').value = hoy;
+    // Establecer fecha actual en zona horaria local
+    const hoy = new Date();
+    const año = hoy.getFullYear();
+    const mes = String(hoy.getMonth() + 1).padStart(2, '0');
+    const dia = String(hoy.getDate()).padStart(2, '0');
+    const fechaLocal = `${año}-${mes}-${dia}`;
+    
+    console.log('Fecha local calculada:', fechaLocal);
+    console.log('Fecha actual del sistema:', hoy);
+    
+    document.getElementById('fecha-venta').value = fechaLocal;
 
     document.getElementById('logout-btn').addEventListener('click', logout);
     document.getElementById('dashboard-btn').addEventListener('click', irADashboard);
@@ -169,6 +178,10 @@ function limpiarFormulario() {
         document.getElementById('telefono').value = '';
         document.getElementById('email').value = '';
         document.getElementById('direccion').value = '';
+        document.getElementById('canal-venta').value = '';
+        document.getElementById('tipo-entrega').value = '';
+        document.getElementById('tipo-comprobante').value = '';
+        document.getElementById('codigo-tracking').value = '';
         document.getElementById('observaciones').value = '';
         
         document.getElementById('productos-container').innerHTML = '';
@@ -185,6 +198,9 @@ function guardarVenta() {
     // Validar formulario
     const cliente = document.getElementById('cliente').value.trim();
     const vendedor = document.getElementById('vendedor').value.trim();
+    const canalVenta = document.getElementById('canal-venta').value;
+    const tipoEntrega = document.getElementById('tipo-entrega').value;
+    const tipoComprobante = document.getElementById('tipo-comprobante').value;
     const productos = document.querySelectorAll('[name="producto-nombre"]');
     
     if (!cliente) {
@@ -194,6 +210,21 @@ function guardarVenta() {
     
     if (!vendedor) {
         mostrarNotificacion('❌ El nombre del vendedor es obligatorio', 'error');
+        return;
+    }
+    
+    if (!canalVenta) {
+        mostrarNotificacion('❌ Debe seleccionar el canal de venta', 'error');
+        return;
+    }
+    
+    if (!tipoEntrega) {
+        mostrarNotificacion('❌ Debe seleccionar el tipo de entrega', 'error');
+        return;
+    }
+    
+    if (!tipoComprobante) {
+        mostrarNotificacion('❌ Debe seleccionar el tipo de comprobante', 'error');
         return;
     }
     
@@ -217,13 +248,28 @@ function guardarVenta() {
     }
     
     // Crear objeto de venta
+    const fechaFormulario = document.getElementById('fecha-venta').value;
+    
+    // Verificar fecha actual
+    const ahora = new Date();
+    const fechaHoy = `${ahora.getFullYear()}-${String(ahora.getMonth() + 1).padStart(2, '0')}-${String(ahora.getDate()).padStart(2, '0')}`;
+    
+    console.log('=== DEBUG FORMULARIO ===');
+    console.log('Fecha del formulario:', fechaFormulario);
+    console.log('Fecha de hoy (calculada):', fechaHoy);
+    console.log('Son iguales:', fechaFormulario === fechaHoy);
+    
     const venta = {
         id: Date.now(),
-        fecha: document.getElementById('fecha-venta').value,
+        fecha: fechaFormulario,
         cliente: cliente,
         telefono: document.getElementById('telefono').value.trim(),
         email: document.getElementById('email').value.trim(),
         direccion: document.getElementById('direccion').value.trim(),
+        canalVenta: document.getElementById('canal-venta').value,
+        tipoEntrega: document.getElementById('tipo-entrega').value,
+        tipoComprobante: document.getElementById('tipo-comprobante').value,
+        codigoTracking: document.getElementById('codigo-tracking').value.trim(),
         vendedor: vendedor,
         observaciones: document.getElementById('observaciones').value.trim(),
         productos: [],
@@ -255,6 +301,10 @@ function guardarVenta() {
     const ventas = JSON.parse(localStorage.getItem('bocettos_ventas') || '[]');
     ventas.push(venta);
     localStorage.setItem('bocettos_ventas', JSON.stringify(ventas));
+    
+    console.log('Venta guardada:', venta);
+    console.log('Total ventas en localStorage:', ventas.length);
+    console.log('=========================');
     
     mostrarNotificacion('✅ Venta guardada exitosamente', 'success');
     
