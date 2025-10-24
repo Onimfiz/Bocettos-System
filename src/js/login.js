@@ -12,8 +12,15 @@ const USUARIOS = [
 // Simular carga inicial
 function inicializarPantallaCarga() {
     setTimeout(() => {
-        document.getElementById('loading-screen').classList.add('hidden');
-        document.getElementById('login-container').classList.remove('hidden');
+        const loadingScreen = document.getElementById('loading-screen');
+        const loginContainer = document.getElementById('login-container');
+        
+        if (loadingScreen) {
+            loadingScreen.classList.add('hidden');
+        }
+        if (loginContainer) {
+            loginContainer.classList.remove('hidden');
+        }
     }, 1500);
 }
 
@@ -21,8 +28,8 @@ function inicializarPantallaCarga() {
 function verificarSesionActiva() {
     const sesionActiva = localStorage.getItem('bocettos_usuario');
     if (sesionActiva) {
-        // Si ya está logueado, redirigir directamente
-        window.location.href = 'dashboard.html';
+        // Si ya está logueado, redirigir al formulario de ventas
+        window.location.href = 'src/formulario-ventas.html';
     }
 }
 
@@ -32,11 +39,20 @@ function verificarSesionActiva() {
 function manejarLogin(e) {
     e.preventDefault();
     
-    const username = document.getElementById('username').value.trim();
-    const password = document.getElementById('password').value;
+    const usernameField = document.getElementById('username');
+    const passwordField = document.getElementById('password');
     const loginBtn = document.getElementById('login-btn');
     const btnText = document.getElementById('btn-text');
     const btnLoading = document.getElementById('btn-loading');
+
+    // Validar que existan los elementos necesarios
+    if (!usernameField || !passwordField || !loginBtn || !btnText || !btnLoading) {
+        console.error('Elementos del formulario no encontrados');
+        return;
+    }
+
+    const username = usernameField.value.trim();
+    const password = passwordField.value;
 
     // Validación básica
     if (!username || !password) {
@@ -64,9 +80,9 @@ function manejarLogin(e) {
             
             mostrarExito('¡Bienvenido ' + usuario.nombre + '!');
             
-            // Redireccionar al dashboard
+            // Redireccionar al formulario de ventas
             setTimeout(() => {
-                window.location.href = 'dashboard.html';
+                window.location.href = 'src/formulario-ventas.html';
             }, 1500);
             
         } else {
@@ -87,12 +103,14 @@ function mostrarError(mensaje) {
     const errorMsg = document.getElementById('error-message');
     const errorText = document.getElementById('error-text');
     
-    errorText.textContent = mensaje;
-    errorMsg.classList.remove('hidden');
-    
-    setTimeout(() => {
-        errorMsg.classList.add('hidden');
-    }, 4000);
+    if (errorMsg && errorText) {
+        errorText.textContent = mensaje;
+        errorMsg.classList.remove('hidden');
+        
+        setTimeout(() => {
+            errorMsg.classList.add('hidden');
+        }, 4000);
+    }
 }
 
 // Función para mostrar éxito
@@ -100,12 +118,14 @@ function mostrarExito(mensaje) {
     const successMsg = document.getElementById('success-message');
     const successText = document.getElementById('success-text');
     
-    successText.textContent = mensaje;
-    successMsg.classList.remove('hidden');
-    
-    setTimeout(() => {
-        successMsg.classList.add('hidden');
-    }, 3000);
+    if (successMsg && successText) {
+        successText.textContent = mensaje;
+        successMsg.classList.remove('hidden');
+        
+        setTimeout(() => {
+            successMsg.classList.add('hidden');
+        }, 3000);
+    }
 }
 
 // ===== INICIALIZACIÓN AL CARGAR LA PÁGINA =====
@@ -118,5 +138,10 @@ document.addEventListener('DOMContentLoaded', function() {
     verificarSesionActiva();
     
     // Configurar event listener para el formulario
-    document.getElementById('login-form').addEventListener('submit', manejarLogin);
+    const loginForm = document.getElementById('login-form');
+    if (loginForm) {
+        loginForm.addEventListener('submit', manejarLogin);
+    } else {
+        console.error('Formulario de login no encontrado');
+    }
 });

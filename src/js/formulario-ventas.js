@@ -13,7 +13,7 @@ window.addEventListener('load', function() {
 function verificarAutenticacion() {
     const usuario = localStorage.getItem('bocettos_usuario');
     if (!usuario) {
-        window.location.href = 'login.html';
+        window.location.href = '../login.html';
         return;
     }
     
@@ -29,16 +29,20 @@ function inicializarFormulario() {
     const dia = String(hoy.getDate()).padStart(2, '0');
     const fechaLocal = `${año}-${mes}-${dia}`;
     
-    console.log('Fecha local calculada:', fechaLocal);
-    console.log('Fecha actual del sistema:', hoy);
-    
     document.getElementById('fecha-venta').value = fechaLocal;
 
-    document.getElementById('logout-btn').addEventListener('click', logout);
-    document.getElementById('dashboard-btn').addEventListener('click', irADashboard);
-    document.getElementById('limpiar-btn').addEventListener('click', limpiarFormulario);
-    document.getElementById('guardar-btn').addEventListener('click', guardarVenta);
-    document.getElementById('agregar-producto-btn').addEventListener('click', agregarProducto);
+    // Configurar event listeners con validación
+    const logoutBtn = document.getElementById('logout-btn');
+    const dashboardBtn = document.getElementById('dashboard-btn');
+    const limpiarBtn = document.getElementById('limpiar-btn');
+    const guardarBtn = document.getElementById('guardar-btn');
+    const agregarBtn = document.getElementById('agregar-producto-btn');
+    
+    if (logoutBtn) logoutBtn.addEventListener('click', logout);
+    if (dashboardBtn) dashboardBtn.addEventListener('click', irADashboard);
+    if (limpiarBtn) limpiarBtn.addEventListener('click', limpiarFormulario);
+    if (guardarBtn) guardarBtn.addEventListener('click', guardarVenta);
+    if (agregarBtn) agregarBtn.addEventListener('click', agregarProducto);
 }
 
 // Gestión de productos
@@ -49,6 +53,27 @@ function agregarPrimerProducto() {
 function agregarProducto() {
     contadorProductos++;
     const productoId = `producto-${contadorProductos}`;
+    
+    // Determinar si mostrar el botón de eliminar (solo a partir del segundo producto)
+    const mostrarBotonEliminar = contadorProductos > 1;
+    const botonEliminarHTML = mostrarBotonEliminar ? `
+        <div>
+            <button 
+                type="button"
+                onclick="eliminarProducto('${productoId}')"
+                class="w-full btn-eliminar text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 flex items-center justify-center space-x-1"
+            >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                </svg>
+                <span>Eliminar</span>
+            </button>
+        </div>
+    ` : `
+        <div>
+            <!-- Espacio reservado para mantener la alineación del grid -->
+        </div>
+    `;
     
     const productoHTML = `
         <div id="${productoId}" class="grid grid-cols-1 md:grid-cols-7 gap-4 items-end p-4 bg-gray-50 rounded-lg border border-gray-200">
@@ -113,18 +138,7 @@ function agregarProducto() {
                     class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-gray-600 text-sm font-medium"
                 >
             </div>
-            <div>
-                <button 
-                    type="button"
-                    onclick="eliminarProducto('${productoId}')"
-                    class="w-full btn-eliminar text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 flex items-center justify-center space-x-1"
-                >
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                    </svg>
-                    <span>Eliminar</span>
-                </button>
-            </div>
+            ${botonEliminarHTML}
         </div>
     `;
     
@@ -133,20 +147,60 @@ function agregarProducto() {
 }
 
 function eliminarProducto(productoId) {
-    if (confirm('¿Está seguro de que desea eliminar este producto?')) {
-        document.getElementById(productoId).remove();
-        calcularTotal();
-    }
+    document.getElementById(productoId).remove();
+    actualizarBotonesEliminar();
+    calcularTotal();
+}
+
+// Función para actualizar la visibilidad de los botones de eliminar
+function actualizarBotonesEliminar() {
+    const productos = document.querySelectorAll('#productos-container > div');
+    
+    productos.forEach((producto, index) => {
+        const botonContainer = producto.querySelector('div:last-child');
+        
+        if (index === 0) {
+            // Primer producto: ocultar botón de eliminar
+            botonContainer.innerHTML = `
+                <!-- Espacio reservado para mantener la alineación del grid -->
+            `;
+        } else {
+            // Productos adicionales: mostrar botón de eliminar si no existe
+            if (!botonContainer.querySelector('button')) {
+                const productoId = producto.id;
+                botonContainer.innerHTML = `
+                    <button 
+                        type="button"
+                        onclick="eliminarProducto('${productoId}')"
+                        class="w-full btn-eliminar text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 flex items-center justify-center space-x-1"
+                    >
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                        </svg>
+                        <span>Eliminar</span>
+                    </button>
+                `;
+            }
+        }
+    });
 }
 
 // Cálculos
 function calcularSubtotal(productoId) {
     const producto = document.getElementById(productoId);
-    const cantidad = parseFloat(producto.querySelector('[name="producto-cantidad"]').value) || 0;
-    const precio = parseFloat(producto.querySelector('[name="producto-precio"]').value) || 0;
+    if (!producto) return; // Evitar errores si el producto no existe
+    
+    const cantidadInput = producto.querySelector('[name="producto-cantidad"]');
+    const precioInput = producto.querySelector('[name="producto-precio"]');
+    const subtotalInput = producto.querySelector('[name="producto-subtotal"]');
+    
+    if (!cantidadInput || !precioInput || !subtotalInput) return; // Evitar errores si faltan elementos
+    
+    const cantidad = parseFloat(cantidadInput.value) || 0;
+    const precio = parseFloat(precioInput.value) || 0;
     const subtotal = cantidad * precio;
     
-    producto.querySelector('[name="producto-subtotal"]').value = formatearMoneda(subtotal);
+    subtotalInput.value = formatearMoneda(subtotal);
     
     calcularTotal();
 }
@@ -174,22 +228,32 @@ function formatearMoneda(valor) {
 // Gestión de formulario
 function limpiarFormulario() {
     if (confirm('¿Está seguro de que desea limpiar todo el formulario?')) {
-        document.getElementById('cliente').value = '';
-        document.getElementById('telefono').value = '';
-        document.getElementById('email').value = '';
-        document.getElementById('direccion').value = '';
-        document.getElementById('canal-venta').value = '';
-        document.getElementById('tipo-entrega').value = '';
-        document.getElementById('tipo-comprobante').value = '';
-        document.getElementById('codigo-tracking').value = '';
-        document.getElementById('observaciones').value = '';
+        // Limpiar campos principales
+        const campos = [
+            'cliente', 'telefono', 'email', 'direccion', 
+            'canal-venta', 'tipo-entrega', 'tipo-comprobante', 
+            'codigo-tracking', 'observaciones'
+        ];
         
-        document.getElementById('productos-container').innerHTML = '';
+        campos.forEach(campo => {
+            const elemento = document.getElementById(campo);
+            if (elemento) {
+                elemento.value = '';
+            }
+        });
+        
+        // Limpiar productos
+        const productosContainer = document.getElementById('productos-container');
+        if (productosContainer) {
+            productosContainer.innerHTML = '';
+        }
+        
+        // Resetear contador y agregar primer producto
         contadorProductos = 0;
         agregarPrimerProducto();
         calcularTotal();
         
-        mostrarNotificacion('🧹 Formulario limpiado correctamente', 'info');
+        mostrarNotificacion('Formulario limpiado correctamente', 'info');
     }
 }
 
@@ -250,15 +314,6 @@ function guardarVenta() {
     // Crear objeto de venta
     const fechaFormulario = document.getElementById('fecha-venta').value;
     
-    // Verificar fecha actual
-    const ahora = new Date();
-    const fechaHoy = `${ahora.getFullYear()}-${String(ahora.getMonth() + 1).padStart(2, '0')}-${String(ahora.getDate()).padStart(2, '0')}`;
-    
-    console.log('=== DEBUG FORMULARIO ===');
-    console.log('Fecha del formulario:', fechaFormulario);
-    console.log('Fecha de hoy (calculada):', fechaHoy);
-    console.log('Son iguales:', fechaFormulario === fechaHoy);
-    
     const venta = {
         id: Date.now(),
         fecha: fechaFormulario,
@@ -276,13 +331,21 @@ function guardarVenta() {
         total: 0
     };
     
-    // Agregar productos a la venta
+    // Agregar productos a la venta - con validaciones adicionales
     productos.forEach(producto => {
         const contenedor = producto.closest('.grid');
+        if (!contenedor) return; // Skip si no encuentra el contenedor
+        
         const nombre = producto.value.trim();
-        const cantidad = parseFloat(contenedor.querySelector('[name="producto-cantidad"]').value) || 0;
-        const precio = parseFloat(contenedor.querySelector('[name="producto-precio"]').value) || 0;
-        const metodoPago = contenedor.querySelector('[name="producto-metodo-pago"]').value;
+        const cantidadInput = contenedor.querySelector('[name="producto-cantidad"]');
+        const precioInput = contenedor.querySelector('[name="producto-precio"]');
+        const metodoPagoSelect = contenedor.querySelector('[name="producto-metodo-pago"]');
+        
+        if (!cantidadInput || !precioInput || !metodoPagoSelect) return; // Skip si faltan elementos
+        
+        const cantidad = parseFloat(cantidadInput.value) || 0;
+        const precio = parseFloat(precioInput.value) || 0;
+        const metodoPago = metodoPagoSelect.value;
         const subtotal = cantidad * precio;
         
         if (nombre && cantidad && precio && metodoPago) {
@@ -302,10 +365,6 @@ function guardarVenta() {
     ventas.push(venta);
     localStorage.setItem('bocettos_ventas', JSON.stringify(ventas));
     
-    console.log('Venta guardada:', venta);
-    console.log('Total ventas en localStorage:', ventas.length);
-    console.log('=========================');
-    
     mostrarNotificacion('✅ Venta guardada exitosamente', 'success');
     
     // Preguntar si desea limpiar el formulario
@@ -319,14 +378,15 @@ function guardarVenta() {
 // Notificaciones
 function mostrarNotificacion(mensaje, tipo = 'info') {
     const colores = {
-        success: 'bg-green-500',
-        error: 'bg-red-500',
-        warning: 'bg-yellow-500',
-        info: 'bg-blue-500'
+        success: 'text-white',
+        error: 'text-white',
+        warning: 'text-white',
+        info: 'text-white'
     };
     
     const notificacion = document.createElement('div');
-    notificacion.className = `${colores[tipo]} text-white px-6 py-3 rounded-lg shadow-lg transform translate-x-full transition-transform duration-300`;
+    notificacion.className = `text-white px-6 py-3 rounded-lg shadow-lg transform translate-x-full transition-transform duration-300`;
+    notificacion.style.backgroundColor = '#4a4a4b';
     notificacion.textContent = mensaje;
     
     document.getElementById('notification-container').appendChild(notificacion);
@@ -347,7 +407,7 @@ function mostrarNotificacion(mensaje, tipo = 'info') {
 function logout() {
     if (confirm('¿Está seguro de que desea cerrar sesión?')) {
         localStorage.removeItem('bocettos_usuario');
-        window.location.href = 'login.html';
+        window.location.href = '../login.html';
     }
 }
 

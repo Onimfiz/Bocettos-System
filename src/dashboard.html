@@ -47,7 +47,7 @@
                     </div>
                 </div>
 
-                <div class="flex items-center space-x-4">
+                <div class="flex items-center space-x-3">
                     <div class="text-sm text-gray-600" id="usuario-info">
                         <span class="font-medium" id="usuario-nombre">Usuario</span>
                         <span class="text-gray-400">•</span>
@@ -56,6 +56,18 @@
                     <div class="text-xs text-gray-500" id="fecha-hora">
 
                     </div>
+                    <button 
+                        id="exportar-csv-btn"
+                        class="px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200 text-white bg-green-600 hover:bg-green-700"
+                    >
+                        📤 Exportar CSV
+                    </button>
+                    <button 
+                        id="historial-btn"
+                        class="px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200 text-white bg-purple-600 hover:bg-purple-700"
+                    >
+                        📋 Historial
+                    </button>
                     <button 
                         id="logout-btn"
                         class="text-gray-500 hover:text-gray-700 transition-colors duration-200"
@@ -191,6 +203,63 @@
                     <button class="text-sm text-bocettos-primary hover:underline" onclick="verAnalisisCompleto()">
                         📊 Ver Análisis Completo
                     </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Clientes VIP -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <!-- Top Clientes por Compras -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                    🏆 Top Clientes por Compras
+                </h3>
+                <div id="top-clientes-compras" class="space-y-3">
+                    <!-- Los datos se cargarán dinámicamente -->
+                </div>
+            </div>
+            
+            <!-- Top Clientes por Monto -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                    💰 Top Clientes por Monto
+                </h3>
+                <div id="top-clientes-monto" class="space-y-3">
+                    <!-- Los datos se cargarán dinámicamente -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Análisis de Productos -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <!-- Top Productos -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                    🏆 Top Productos Más Vendidos
+                </h3>
+                <div id="top-productos" class="space-y-3">
+                    <!-- Los datos se cargarán dinámicamente -->
+                </div>
+            </div>
+            
+            <!-- Análisis por Ubicación -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                    📊 Resumen de Ventas
+                </h3>
+                <div id="resumen-ventas" class="space-y-3">
+                    <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                        <span class="text-gray-700">Total Productos Vendidos:</span>
+                        <span class="font-bold text-blue-600" id="total-productos-vendidos">0</span>
+                    </div>
+                    <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                        <span class="text-gray-700">Producto Más Popular:</span>
+                        <span class="font-bold text-green-600" id="producto-mas-popular">-</span>
+                    </div>
+                    <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                        <span class="text-gray-700">Ticket Promedio:</span>
+                        <span class="font-bold text-purple-600" id="ticket-promedio">$0</span>
+                    </div>
                 </div>
             </div>
         </div>
