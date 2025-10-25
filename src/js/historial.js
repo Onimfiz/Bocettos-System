@@ -1,13 +1,8 @@
-// ===== HISTORIAL DE VENTAS =====
-
 let ventasOriginales = [];
 let ventasFiltradas = [];
 let usuarioActual = null;
 
-// ===== INICIALIZACIÓN =====
-
 document.addEventListener('DOMContentLoaded', function() {
-    // Verificar autenticación
     const usuario = localStorage.getItem('bocettos_usuario');
     if (!usuario) {
         window.location.href = '../login.html';
@@ -15,17 +10,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     usuarioActual = JSON.parse(usuario);
-    
-    // Mostrar información del usuario
     mostrarUsuario();
-    
-    // Configurar event listeners PRIMERO
     configurarEventListeners();
-    
-    // Cargar ventas
     cargarVentas();
-    
-    // Aplicar filtros iniciales
     aplicarFiltros();
 });
 
@@ -48,119 +35,39 @@ function cargarVentas() {
 }
 
 function configurarEventListeners() {
-    // Botones de navegación
-    const dashboardBtn = document.getElementById('dashboard-btn');
-    const nuevaVentaBtn = document.getElementById('nueva-venta-btn');
-    const logoutBtn = document.getElementById('logout-btn');
+    document.getElementById('dashboard-btn')?.addEventListener('click', () => window.location.href = 'dashboard.html');
+    document.getElementById('nueva-venta-btn')?.addEventListener('click', () => window.location.href = 'formulario-ventas.html');
     
-    if (dashboardBtn) {
-        dashboardBtn.addEventListener('click', () => {
-            window.location.href = 'dashboard.html';
-        });
-    }
-    
-    if (nuevaVentaBtn) {
-        nuevaVentaBtn.addEventListener('click', () => {
-            window.location.href = 'formulario-ventas.html';
-        });
-    }
-    
-    if (logoutBtn) {
-        logoutBtn.addEventListener('click', logout);
-    }
-    
-    // Configurar botón de limpiar datos (solo para administradores)
     const limpiarDatosBtn = document.getElementById('limpiar-datos-btn');
     if (limpiarDatosBtn && usuarioActual.rol === 'admin') {
         limpiarDatosBtn.style.display = 'block';
         limpiarDatosBtn.addEventListener('click', limpiarTodasLasVentas);
     }
     
-    // Filtros - con verificación de existencia
-    const aplicarBtn = document.getElementById('aplicar-filtros-btn');
-    const limpiarBtn = document.getElementById('limpiar-filtros-btn');
-    const filtroCliente = document.getElementById('filtro-cliente');
-    const filtroProducto = document.getElementById('filtro-producto');
-    const fechaDesde = document.getElementById('filtro-fecha-desde');
-    const fechaHasta = document.getElementById('filtro-fecha-hasta');
+    document.getElementById('aplicar-filtros-btn')?.addEventListener('click', aplicarFiltros);
+    document.getElementById('limpiar-filtros-btn')?.addEventListener('click', limpiarFiltros);
+    document.getElementById('filtro-cliente')?.addEventListener('input', aplicarFiltros);
+    document.getElementById('filtro-producto')?.addEventListener('input', aplicarFiltros);
+    document.getElementById('filtro-fecha-desde')?.addEventListener('change', aplicarFiltros);
+    document.getElementById('filtro-fecha-hasta')?.addEventListener('change', aplicarFiltros);
     
-    if (aplicarBtn) {
-        aplicarBtn.addEventListener('click', aplicarFiltros);
-    }
-    
-    if (limpiarBtn) {
-        limpiarBtn.addEventListener('click', limpiarFiltros);
-    }
-    
-    // Filtros en tiempo real
-    if (filtroCliente) {
-        filtroCliente.addEventListener('input', aplicarFiltros);
-    }
-    if (filtroProducto) {
-        filtroProducto.addEventListener('input', aplicarFiltros);
-    }
-    if (fechaDesde) {
-        fechaDesde.addEventListener('change', aplicarFiltros);
-    }
-    if (fechaHasta) {
-        fechaHasta.addEventListener('change', aplicarFiltros);
-    }
-    
-    // Modal
-    const cerrarModalBtn = document.getElementById('cerrar-modal');
-    const modalDetalle = document.getElementById('modal-detalle');
-    
-    if (cerrarModalBtn) {
-        cerrarModalBtn.addEventListener('click', cerrarModal);
-    }
-    if (modalDetalle) {
-        modalDetalle.addEventListener('click', (e) => {
-            if (e.target.id === 'modal-detalle') {
-                cerrarModal();
-            }
-        });
-    }
+    document.getElementById('cerrar-modal')?.addEventListener('click', cerrarModal);
+    document.getElementById('modal-detalle')?.addEventListener('click', (e) => {
+        if (e.target.id === 'modal-detalle') cerrarModal();
+    });
 }
 
-// ===== FILTROS =====
-
 window.aplicarFiltros = function() {
-    console.log('Aplicando filtros...'); // Debug
-    
-    const filtroClienteElement = document.getElementById('filtro-cliente');
-    const filtroProductoElement = document.getElementById('filtro-producto');
-    const fechaDesdeElement = document.getElementById('filtro-fecha-desde');
-    const fechaHastaElement = document.getElementById('filtro-fecha-hasta');
-    
-    const filtroCliente = filtroClienteElement ? filtroClienteElement.value.toLowerCase().trim() : '';
-    const filtroProducto = filtroProductoElement ? filtroProductoElement.value.toLowerCase().trim() : '';
-    const fechaDesde = fechaDesdeElement ? fechaDesdeElement.value : '';
-    const fechaHasta = fechaHastaElement ? fechaHastaElement.value : '';
+    const filtroCliente = document.getElementById('filtro-cliente')?.value.toLowerCase().trim() || '';
+    const filtroProducto = document.getElementById('filtro-producto')?.value.toLowerCase().trim() || '';
+    const fechaDesde = document.getElementById('filtro-fecha-desde')?.value || '';
+    const fechaHasta = document.getElementById('filtro-fecha-hasta')?.value || '';
     
     ventasFiltradas = ventasOriginales.filter(venta => {
-        // Filtro por cliente
-        if (filtroCliente && venta.cliente && !String(venta.cliente).toLowerCase().includes(filtroCliente)) {
-            return false;
-        }
-        
-        // Filtro por producto
-        if (filtroProducto && venta.productos) {
-            const tieneProducto = venta.productos.some(producto => 
-                producto.nombre && String(producto.nombre).toLowerCase().includes(filtroProducto)
-            );
-            if (!tieneProducto) return false;
-        }
-        
-        // Filtro por fecha desde
-        if (fechaDesde && venta.fecha < fechaDesde) {
-            return false;
-        }
-        
-        // Filtro por fecha hasta
-        if (fechaHasta && venta.fecha > fechaHasta) {
-            return false;
-        }
-        
+        if (filtroCliente && !String(venta.cliente).toLowerCase().includes(filtroCliente)) return false;
+        if (filtroProducto && !venta.productos.some(p => String(p.nombre).toLowerCase().includes(filtroProducto))) return false;
+        if (fechaDesde && venta.fecha < fechaDesde) return false;
+        if (fechaHasta && venta.fecha > fechaHasta) return false;
         return true;
     });
     
@@ -179,15 +86,8 @@ window.limpiarFiltros = function() {
 }
 
 function actualizarContador() {
-    const contadorElement = document.getElementById('total-registros');
-    if (contadorElement) {
-        contadorElement.textContent = `Total: ${ventasFiltradas.length} ventas`;
-    } else {
-        console.error('Elemento total-registros no encontrado');
-    }
+    document.getElementById('total-registros').textContent = `Total: ${ventasFiltradas.length} ventas`;
 }
-
-// ===== MOSTRAR DATOS =====
 
 function mostrarVentas() {
     const tbody = document.getElementById('tabla-historial');
@@ -237,10 +137,10 @@ function mostrarVentas() {
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                 <button 
-                    onclick="verDetalle('${venta.id}')"
-                    class="text-bocettos-primary hover:text-blue-700 mr-3"
+                    onclick="window.verDetalle(${venta.id})"
+                    class="text-bocettos-primary hover:text-blue-700 mr-3 text-base font-semibold"
                 >
-                    👁️ Ver
+                     Ver
                 </button>
             </td>
         </tr>
@@ -250,7 +150,7 @@ function mostrarVentas() {
 // ===== MODAL DE DETALLE =====
 
 function verDetalle(ventaId) {
-    const venta = ventasFiltradas.find(v => v.id === ventaId);
+    const venta = ventasFiltradas.find(v => v.id == ventaId);
     if (!venta) return;
     
     const contenido = document.getElementById('contenido-detalle');
@@ -321,8 +221,6 @@ function cerrarModal() {
     document.getElementById('modal-detalle').classList.add('hidden');
 }
 
-// ===== UTILIDADES =====
-
 function formatearFecha(fecha) {
     const date = new Date(fecha + 'T00:00:00');
     return date.toLocaleDateString('es-ES', {
@@ -339,19 +237,42 @@ function formatearNumero(numero) {
     });
 }
 
-function logout() {
-    if (confirm('¿Está seguro de que desea cerrar sesión?')) {
-        localStorage.removeItem('bocettos_usuario');
-        window.location.href = '../login.html';
-    }
+function limpiarTodasLasVentas() {
+    Swal.fire({
+        title: '⚠️ ADVERTENCIA',
+        html: 'Esto borrará <strong>TODAS</strong> las ventas del sistema de forma permanente.<br><br>¿Estás seguro de continuar?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#dc2626',
+        cancelButtonColor: '#6b7280',
+        confirmButtonText: 'Sí, eliminar todo',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            Swal.fire({
+                title: '⚠️ Confirmación Final',
+                text: 'Esta acción NO se puede deshacer. ¿Realmente deseas eliminar todas las ventas?',
+                icon: 'error',
+                showCancelButton: true,
+                confirmButtonColor: '#dc2626',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'Sí, confirmo',
+                cancelButtonText: 'Cancelar'
+            }).then((finalResult) => {
+                if (finalResult.isConfirmed) {
+                    localStorage.removeItem('bocettos_ventas');
+                    Swal.fire({
+                        title: '✅ Eliminado',
+                        text: 'Todas las ventas han sido eliminadas',
+                        icon: 'success',
+                        confirmButtonColor: '#059669'
+                    }).then(() => {
+                        location.reload();
+                    });
+                }
+            });
+        }
+    });
 }
 
-function limpiarTodasLasVentas() {
-    if (confirm('⚠️ ADVERTENCIA: Esto borrará TODAS las ventas del sistema de forma permanente.\n\n¿Estás seguro de continuar?')) {
-        if (confirm('Esta acción NO se puede deshacer. ¿Realmente deseas eliminar todas las ventas?')) {
-            localStorage.removeItem('bocettos_ventas');
-            alert('✅ Todas las ventas han sido eliminadas');
-            location.reload();
-        }
-    }
-}
+window.verDetalle = verDetalle;

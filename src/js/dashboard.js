@@ -2,9 +2,7 @@ let usuario = null;
 let ventas = [];
 let graficoSemanal = null;
 
-window.addEventListener('load', function() {
-    inicializar();
-});
+window.addEventListener('load', inicializar);
 
 function inicializar() {
     const sesion = localStorage.getItem('bocettos_usuario');
@@ -12,44 +10,19 @@ function inicializar() {
         window.location.href = '../login.html';
         return;
     }
-    
     usuario = JSON.parse(sesion);
     mostrarUsuario();
     cargarVentas();
     actualizarDatos();
-    
-    // Configurar botón de logout
-    const logoutBtn = document.getElementById('logout-btn');
-    if (logoutBtn) {
-        logoutBtn.addEventListener('click', logout);
-    }
-    
-    // Configurar botón de exportar CSV
-    const exportarCsvBtn = document.getElementById('exportar-csv-btn');
-    if (exportarCsvBtn) {
-        exportarCsvBtn.addEventListener('click', exportarVentasCSV);
-    }
-    
-    // Configurar botón de historial
-    const historialBtn = document.getElementById('historial-btn');
-    if (historialBtn) {
-        historialBtn.addEventListener('click', () => {
-            window.location.href = 'historial.html';
-        });
-    }
-    
+    document.getElementById('logout-btn')?.addEventListener('click', logout);
+    document.getElementById('exportar-csv-btn')?.addEventListener('click', exportarVentasCSV);
+    document.getElementById('historial-btn')?.addEventListener('click', () => window.location.href = 'historial.html');
     setInterval(actualizarDatos, 30000);
 }
 
-// ===== ANÁLISIS DE CLIENTES VIP =====
-
 function mostrarClientesVIP() {
     const clientesStats = analizarClientes();
-    
-    // Top clientes por número de compras
-    const topCompras = clientesStats
-        .sort((a, b) => b.compras - a.compras)
-        .slice(0, 5);
+    const topCompras = clientesStats.sort((a, b) => b.compras - a.compras).slice(0, 5);
     
     const htmlCompras = topCompras.map((cliente, index) => `
         <div class="flex items-center justify-between p-3 rounded-lg ${index === 0 ? 'bg-yellow-50 border border-yellow-200' : 'bg-gray-50'}">
@@ -63,16 +36,13 @@ function mostrarClientesVIP() {
                 </div>
             </div>
             <div class="text-right">
-                <div class="font-bold text-green-600">$${cliente.total.toLocaleString()}</div>
+                <div class="font-bold text-gray-900">$${cliente.total.toLocaleString()}</div>
                 <div class="text-xs text-gray-500">Total gastado</div>
             </div>
         </div>
     `).join('');
     
-    // Top clientes por monto gastado
-    const topMonto = clientesStats
-        .sort((a, b) => b.total - a.total)
-        .slice(0, 5);
+    const topMonto = clientesStats.sort((a, b) => b.total - a.total).slice(0, 5);
     
     const htmlMonto = topMonto.map((cliente, index) => `
         <div class="flex items-center justify-between p-3 rounded-lg ${index === 0 ? 'bg-green-50 border border-green-200' : 'bg-gray-50'}">
@@ -86,19 +56,17 @@ function mostrarClientesVIP() {
                 </div>
             </div>
             <div class="text-right">
-                <div class="font-bold text-green-600">$${cliente.total.toLocaleString()}</div>
+                <div class="font-bold text-gray-900">$${cliente.total.toLocaleString()}</div>
                 <div class="text-xs text-gray-500">${cliente.compras} compra${cliente.compras > 1 ? 's' : ''}</div>
             </div>
         </div>
     `).join('');
     
-    // Actualizar DOM
     const topComprasElement = document.getElementById('top-clientes-compras');
     const topMontoElement = document.getElementById('top-clientes-monto');
     
     if (topComprasElement) {
-        topComprasElement.innerHTML = htmlCompras || 
-            '<div class="text-center py-4 text-gray-500">Sin datos de clientes aún</div>';
+        topComprasElement.innerHTML = htmlCompras || '<div class="text-center py-4 text-gray-500">Sin datos de clientes aún</div>';
     }
     
     if (topMontoElement) {
@@ -125,33 +93,19 @@ function analizarClientes() {
         stats.compras++;
         stats.total += venta.total;
         
-        // Actualizar última compra si es más reciente
         if (venta.fecha > stats.ultimaCompra) {
             stats.ultimaCompra = venta.fecha;
         }
     });
-    
-    // Convertir a array y calcular promedio
     return Array.from(clientesMap.values()).map(cliente => ({
         ...cliente,
         promedio: cliente.total / cliente.compras
     }));
 }
 
-// Función para análisis completo (botón en dashboard)
-function verAnalisisCompleto() {
-    window.location.href = 'historial.html';
-}
-
-// ===== ANÁLISIS DE PRODUCTOS TOP =====
-
 function mostrarAnalisisProductos() {
     const productosStats = analizarProductos();
-    
-    // Top 5 productos más vendidos
-    const topProductos = productosStats
-        .sort((a, b) => b.cantidadVendida - a.cantidadVendida)
-        .slice(0, 5);
+    const topProductos = productosStats.sort((a, b) => b.cantidadVendida - a.cantidadVendida).slice(0, 5);
     
     const html = topProductos.map((producto, index) => `
         <div class="flex items-center justify-between p-3 rounded-lg ${index === 0 ? 'bg-blue-50 border border-blue-200' : 'bg-gray-50'}">
@@ -165,23 +119,20 @@ function mostrarAnalisisProductos() {
                 </div>
             </div>
             <div class="text-right">
-                <div class="font-bold text-green-600">$${producto.ingresoTotal.toLocaleString()}</div>
+                <div class="font-bold text-gray-900">$${producto.ingresoTotal.toLocaleString()}</div>
                 <div class="text-xs text-gray-500">${producto.ventasCount} ventas</div>
             </div>
         </div>
     `).join('');
     
-    // Si hay un elemento para productos top, actualízalo
     const productosElement = document.getElementById('top-productos');
     if (productosElement) {
-        productosElement.innerHTML = html || 
-            '<div class="text-center py-4 text-gray-500">Sin datos de productos aún</div>';
+        productosElement.innerHTML = html || '<div class="text-center py-4 text-gray-500">Sin datos de productos aún</div>';
     }
 }
 
 function analizarProductos() {
     const productosMap = new Map();
-    
     ventas.forEach(venta => {
         venta.productos.forEach(producto => {
             const nombre = producto.nombre;
@@ -208,8 +159,6 @@ function analizarProductos() {
         precioPromedio: producto.ingresoTotal / producto.cantidadVendida
     }));
 }
-
-// ===== RESUMEN DE VENTAS =====
 
 function mostrarResumenVentas() {
     const productosStats = analizarProductos();
@@ -248,12 +197,6 @@ function mostrarResumenVentas() {
 function mostrarUsuario() {
     document.getElementById('usuario-nombre').textContent = usuario.nombre;
     document.getElementById('usuario-ubicacion').textContent = usuario.ubicacion || 'Tienda';
-    
-    if (usuario.rol === 'gerente') {
-        document.getElementById('admin-link').style.display = 'block';
-    }
-    
-    // Reloj
     actualizarHora();
     setInterval(actualizarHora, 60000);
 }
@@ -280,6 +223,14 @@ function actualizarDatos() {
     });
     const totalHoy = ventasHoy.reduce((sum, v) => sum + v.total, 0);
     
+    // Ventas de ayer
+    const ayer = new Date();
+    ayer.setDate(ayer.getDate() - 1);
+    const ayerStr = `${ayer.getFullYear()}-${String(ayer.getMonth() + 1).padStart(2, '0')}-${String(ayer.getDate()).padStart(2, '0')}`;
+    const ventasAyer = ventas.filter(v => v.fecha === ayerStr);
+    const totalAyer = ventasAyer.reduce((sum, v) => sum + v.total, 0);
+    const variacionHoy = totalAyer > 0 ? ((totalHoy - totalAyer) / totalAyer * 100) : 0;
+    
     // Productos de hoy
     const productosHoy = ventasHoy.reduce((sum, v) => 
         sum + v.productos.reduce((pSum, p) => pSum + p.cantidad, 0), 0);
@@ -287,35 +238,59 @@ function actualizarDatos() {
     // Clientes únicos
     const clientesHoy = new Set(ventasHoy.map(v => v.cliente)).size;
     
-    // Total del mes - corregido para usar fecha local
+    // Total del mes
     const fechaActual = new Date();
     const mesActual = fechaActual.getMonth();
     const añoActual = fechaActual.getFullYear();
     
     const ventasMes = ventas.filter(v => {
         if (!v.fecha) return false;
-        
-        // Parsear fecha usando formato YYYY-MM-DD directamente
         const partesFecha = v.fecha.split('-');
         if (partesFecha.length !== 3) return false;
-        
         const añoVenta = parseInt(partesFecha[0]);
-        const mesVenta = parseInt(partesFecha[1]) - 1; // JavaScript usa 0-11 para meses
-        
+        const mesVenta = parseInt(partesFecha[1]) - 1;
         return mesVenta === mesActual && añoVenta === añoActual;
     });
     const totalMes = ventasMes.reduce((sum, v) => sum + v.total, 0);
     
-    // Actualizar interfaz - con validaciones
+    // Ventas del mes anterior
+    const mesAnterior = mesActual === 0 ? 11 : mesActual - 1;
+    const añoMesAnterior = mesActual === 0 ? añoActual - 1 : añoActual;
+    const ventasMesAnterior = ventas.filter(v => {
+        if (!v.fecha) return false;
+        const partesFecha = v.fecha.split('-');
+        if (partesFecha.length !== 3) return false;
+        const añoVenta = parseInt(partesFecha[0]);
+        const mesVenta = parseInt(partesFecha[1]) - 1;
+        return mesVenta === mesAnterior && añoVenta === añoMesAnterior;
+    });
+    const totalMesAnterior = ventasMesAnterior.reduce((sum, v) => sum + v.total, 0);
+    const variacionMes = totalMesAnterior > 0 ? ((totalMes - totalMesAnterior) / totalMesAnterior * 100) : 0;
+    
+    // Actualizar interfaz
     const ventasHoyElement = document.getElementById('ventas-hoy');
     const ventasMesElement = document.getElementById('ventas-mes');
     const productosHoyElement = document.getElementById('productos-hoy');
     const clientesUnicosElement = document.getElementById('clientes-unicos');
+    const variacionHoyElement = document.getElementById('variacion-hoy');
+    const variacionMesElement = document.getElementById('variacion-mes');
     
     if (ventasHoyElement) ventasHoyElement.textContent = `S/ ${totalHoy.toFixed(2)}`;
     if (ventasMesElement) ventasMesElement.textContent = `S/ ${totalMes.toFixed(2)}`;
     if (productosHoyElement) productosHoyElement.textContent = productosHoy;
     if (clientesUnicosElement) clientesUnicosElement.textContent = clientesHoy;
+    
+    if (variacionHoyElement) {
+        const icono = variacionHoy >= 0 ? '📈' : '📉';
+        const color = variacionHoy >= 0 ? 'text-green-500' : 'text-red-500';
+        variacionHoyElement.innerHTML = `<span class="${color}">${icono} ${variacionHoy >= 0 ? '+' : ''}${variacionHoy.toFixed(1)}%</span> vs ayer`;
+    }
+    
+    if (variacionMesElement) {
+        const icono = variacionMes >= 0 ? '📈' : '📉';
+        const color = variacionMes >= 0 ? 'text-green-500' : 'text-red-500';
+        variacionMesElement.innerHTML = `<span class="${color}">${icono} ${variacionMes >= 0 ? '+' : ''}${variacionMes.toFixed(1)}%</span> vs anterior`;
+    }
     
     // Gráfico semanal simple
     mostrarGraficoSemanal();
@@ -523,34 +498,64 @@ function actualizarHora() {
 }
 
 function logout() {
-    if (confirm('¿Cerrar sesión?')) {
-        localStorage.removeItem('bocettos_usuario');
-        window.location.href = '../login.html';
-    }
+    Swal.fire({
+        title: '¿Cerrar sesión?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#4a4a4b',
+        cancelButtonColor: '#6b7280',
+        confirmButtonText: 'Aceptar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            localStorage.removeItem('bocettos_usuario');
+            window.location.href = '../login.html';
+        }
+    });
 }
 
 function limpiarTodasLasVentas() {
-    if (confirm('⚠️ ADVERTENCIA: Esto borrará TODAS las ventas del sistema de forma permanente.\n\n¿Estás seguro de continuar?')) {
-        if (confirm('Esta acción NO se puede deshacer. ¿Realmente deseas eliminar todas las ventas?')) {
-            localStorage.removeItem('bocettos_ventas');
-            alert('✅ Todas las ventas han sido eliminadas');
-            location.reload();
+    Swal.fire({
+        title: '⚠️ ADVERTENCIA',
+        html: 'Esto borrará <strong>TODAS</strong> las ventas del sistema de forma permanente.<br><br>¿Estás seguro de continuar?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#dc2626',
+        cancelButtonColor: '#6b7280',
+        confirmButtonText: 'Sí, eliminar todo',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            Swal.fire({
+                title: '⚠️ Confirmación Final',
+                text: 'Esta acción NO se puede deshacer. ¿Realmente deseas eliminar todas las ventas?',
+                icon: 'error',
+                showCancelButton: true,
+                confirmButtonColor: '#dc2626',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'Sí, confirmo',
+                cancelButtonText: 'Cancelar'
+            }).then((finalResult) => {
+                if (finalResult.isConfirmed) {
+                    localStorage.removeItem('bocettos_ventas');
+                    Swal.fire({
+                        title: '✅ Eliminado',
+                        text: 'Todas las ventas han sido eliminadas',
+                        icon: 'success',
+                        confirmButtonColor: '#059669'
+                    }).then(() => {
+                        location.reload();
+                    });
+                }
+            });
         }
-    }
+    });
 }
 
-// Funciones de navegación simples
-function verDetalleVentas(tipo) {
-    // Redirigir a la página de historial
-    window.location.href = 'historial.html';
-}
-
-// Función para exportar ventas a CSV
 function exportarVentasCSV() {
     const todasVentas = JSON.parse(localStorage.getItem('bocettos_ventas') || '[]');
     const usuarioActual = JSON.parse(localStorage.getItem('bocettos_usuario'));
     
-    // Filtrar ventas del usuario actual si no es admin
     let ventasParaExportar = todasVentas;
     if (usuarioActual.rol !== 'admin') {
         ventasParaExportar = todasVentas.filter(venta => venta.vendedor === usuarioActual.nombre);
@@ -561,76 +566,53 @@ function exportarVentasCSV() {
         return;
     }
     
-    // Crear header del CSV
-    const header = [
-        'Fecha', 'Hora', 'Cliente', 'Teléfono', 'Email', 'Dirección',
-        'Canal de Venta', 'Tipo de Entrega', 'Tipo de Comprobante', 'Código de Tracking',
-        'Producto', 'Cantidad', 'Precio Unitario', 'Método de Pago', 'Subtotal',
-        'Total Venta', 'Vendedor'
-    ];
-    
-    // Crear filas del CSV
-    const filas = [];
+    const datosExcel = [];
     ventasParaExportar.forEach(venta => {
         venta.productos.forEach(producto => {
-            const fila = [
-                venta.fecha,
-                venta.hora || '',
-                venta.cliente,
-                venta.telefono || '',
-                venta.email || '',
-                venta.direccion || '',
-                venta.canalVenta || '',
-                venta.tipoEntrega || '',
-                venta.tipoComprobante || '',
-                venta.codigoTracking || '',
-                producto.nombre,
-                producto.cantidad,
-                producto.precio,
-                producto.metodoPago,
-                producto.subtotal,
-                venta.total,
-                venta.vendedor
-            ];
-            filas.push(fila);
+            datosExcel.push({
+                'Fecha': venta.fecha,
+                'Hora': venta.hora || '',
+                'Cliente': venta.cliente,
+                'Teléfono': venta.telefono || '',
+                'Email': venta.email || '',
+                'Dirección': venta.direccion || '',
+                'Canal de Venta': venta.canalVenta || '',
+                'Tipo de Entrega': venta.tipoEntrega || '',
+                'Tipo de Comprobante': venta.tipoComprobante || '',
+                'Código de Tracking': venta.codigoTracking || '',
+                'Producto': producto.nombre,
+                'Cantidad': producto.cantidad,
+                'Precio Unitario': producto.precio,
+                'Método de Pago': producto.metodoPago,
+                'Subtotal': producto.subtotal,
+                'Total Venta': venta.total,
+                'Vendedor': venta.vendedor
+            });
         });
     });
     
-    // Combinar header y filas
-    const csvContent = [header, ...filas]
-        .map(fila => fila.map(campo => {
-            // Limpiar el campo y escapar comillas
-            const valor = String(campo || '').replace(/"/g, '""');
-            return `"${valor}"`;
-        }).join(','))
-        .join('\r\n');
+    const ws = XLSX.utils.json_to_sheet(datosExcel);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Ventas');
     
-    // Crear y descargar archivo con BOM UTF-8 para Excel
+    const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+    
     const fecha = new Date().toISOString().split('T')[0];
     const nombreArchivo = usuarioActual.rol === 'admin' 
-        ? `bocettos_ventas_todas_${fecha}.csv`
-        : `bocettos_ventas_${usuarioActual.nombre}_${fecha}.csv`;
+        ? `bocettos_ventas_todas_${fecha}.xlsx`
+        : `bocettos_ventas_${usuarioActual.nombre}_${fecha}.xlsx`;
     
-    // Agregar BOM UTF-8 para que Excel lo reconozca
-    const BOM = '\uFEFF';
-    const blob = new Blob([BOM + csvContent], { type: 'text/csv;charset=utf-8;' });
+    const blob = new Blob([wbout], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
+    link.href = url;
+    link.download = nombreArchivo;
+    link.click();
+    URL.revokeObjectURL(url);
     
-    if (link.download !== undefined) {
-        const url = URL.createObjectURL(blob);
-        link.setAttribute('href', url);
-        link.setAttribute('download', nombreArchivo);
-        link.style.visibility = 'hidden';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        
-        // Mostrar notificación de éxito
-        mostrarNotificacion(`✅ Archivo ${nombreArchivo} descargado exitosamente`, 'success');
-    }
+    mostrarNotificacion(`✅ Archivo ${nombreArchivo} descargado exitosamente`, 'success');
 }
 
-// Función para mostrar notificaciones
 function mostrarNotificacion(mensaje, tipo = 'success') {
     const colores = {
         success: 'bg-green-500',
