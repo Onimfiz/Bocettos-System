@@ -11,7 +11,7 @@ window.addEventListener('load', function() {
 function verificarAutenticacion() {
     const usuario = localStorage.getItem('bocettos_usuario');
     if (!usuario) {
-        window.location.href = '../login.html';
+        window.location.href = '../index.html';
         return;
     }
     document.getElementById('vendedor').value = JSON.parse(usuario).nombre;

@@ -7,7 +7,7 @@ window.addEventListener('load', inicializar);
 function inicializar() {
     const sesion = localStorage.getItem('bocettos_usuario');
     if (!sesion) {
-        window.location.href = '../login.html';
+        window.location.href = '../index.html';
         return;
     }
     usuario = JSON.parse(sesion);
@@ -509,7 +509,7 @@ function logout() {
     }).then((result) => {
         if (result.isConfirmed) {
             localStorage.removeItem('bocettos_usuario');
-            window.location.href = '../login.html';
+            window.location.href = '../index.html';
         }
     });
 }
