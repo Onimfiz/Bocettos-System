@@ -36,7 +36,7 @@ function mostrarClientesVIP() {
                 </div>
             </div>
             <div class="text-right">
-                <div class="font-bold text-gray-900">$${cliente.total.toLocaleString()}</div>
+                <div class="font-bold text-gray-900">S/ ${cliente.total.toLocaleString()}</div>
                 <div class="text-xs text-gray-500">Total gastado</div>
             </div>
         </div>
@@ -52,11 +52,11 @@ function mostrarClientesVIP() {
                 </div>
                 <div>
                     <div class="font-medium text-gray-800">${cliente.nombre}</div>
-                    <div class="text-sm text-gray-600">$${cliente.promedio.toLocaleString()} promedio</div>
+                    <div class="text-sm text-gray-600">S/ ${cliente.promedio.toLocaleString()} promedio</div>
                 </div>
             </div>
             <div class="text-right">
-                <div class="font-bold text-gray-900">$${cliente.total.toLocaleString()}</div>
+                <div class="font-bold text-gray-900">S/ ${cliente.total.toLocaleString()}</div>
                 <div class="text-xs text-gray-500">${cliente.compras} compra${cliente.compras > 1 ? 's' : ''}</div>
             </div>
         </div>
@@ -119,7 +119,7 @@ function mostrarAnalisisProductos() {
                 </div>
             </div>
             <div class="text-right">
-                <div class="font-bold text-gray-900">$${producto.ingresoTotal.toLocaleString()}</div>
+                <div class="font-bold text-gray-900">S/ ${producto.ingresoTotal.toLocaleString()}</div>
                 <div class="text-xs text-gray-500">${producto.ventasCount} ventas</div>
             </div>
         </div>
@@ -187,7 +187,7 @@ function mostrarResumenVentas() {
     }
     
     if (ticketPromedioElement) {
-        ticketPromedioElement.textContent = `$${ticketPromedio.toLocaleString('es-ES', {
+        ticketPromedioElement.textContent = `S/ ${ticketPromedio.toLocaleString('es-ES', {
             minimumFractionDigits: 0,
             maximumFractionDigits: 2
         })}`;

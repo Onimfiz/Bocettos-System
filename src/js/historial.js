@@ -130,7 +130,7 @@ function mostrarVentas() {
                 </span>
             </td>
             <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm font-bold text-green-600">$${formatearNumero(venta.total)}</div>
+                <div class="text-sm font-bold text-green-600">S/ ${formatearNumero(venta.total)}</div>
             </td>
             <td class="px-6 py-4 whitespace-nowrap">
                 <div class="text-sm text-gray-900">${venta.vendedor}</div>
@@ -191,14 +191,14 @@ function verDetalle(ventaId) {
                                 <div>
                                     <div class="font-medium">${producto.nombre}</div>
                                     <div class="text-sm text-gray-600">
-                                        Cantidad: ${producto.cantidad} × $${formatearNumero(producto.precio)}
+                                        Cantidad: ${producto.cantidad} × S/ ${formatearNumero(producto.precio)}
                                     </div>
                                     <div class="text-sm text-gray-600">
                                         Método de pago: ${producto.metodoPago}
                                     </div>
                                 </div>
                                 <div class="text-right">
-                                    <div class="font-bold text-green-600">$${formatearNumero(producto.subtotal)}</div>
+                                    <div class="font-bold text-green-600">S/ ${formatearNumero(producto.subtotal)}</div>
                                 </div>
                             </div>
                         </div>
