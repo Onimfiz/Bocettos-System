@@ -1,14 +1,17 @@
+// Historial de Ventas - BOCETTOS
+// Gestión de filtros y visualización de ventas registradas
 let ventasOriginales = [];
 let ventasFiltradas = [];
 let usuarioActual = null;
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
+    // Cargar datos del usuario actual
     const usuario = localStorage.getItem('bocettos_usuario');
     if (!usuario) {
         window.location.href = '../index.html';
         return;
     }
-    
+
     usuarioActual = JSON.parse(usuario);
     mostrarUsuario();
     configurarEventListeners();
@@ -23,46 +26,46 @@ function mostrarUsuario() {
 
 function cargarVentas() {
     const todasVentas = JSON.parse(localStorage.getItem('bocettos_ventas') || '[]');
-    
+
     // Filtrar ventas según el rol del usuario
     if (usuarioActual.rol === 'admin') {
         ventasOriginales = todasVentas;
     } else {
         ventasOriginales = todasVentas.filter(venta => venta.vendedor === usuarioActual.nombre);
     }
-    
+
     ventasFiltradas = [...ventasOriginales];
 }
 
 function configurarEventListeners() {
     document.getElementById('dashboard-btn')?.addEventListener('click', () => window.location.href = 'dashboard.html');
     document.getElementById('nueva-venta-btn')?.addEventListener('click', () => window.location.href = 'formulario-ventas.html');
-    
+
     const limpiarDatosBtn = document.getElementById('limpiar-datos-btn');
     if (limpiarDatosBtn && usuarioActual.rol === 'admin') {
         limpiarDatosBtn.style.display = 'block';
         limpiarDatosBtn.addEventListener('click', limpiarTodasLasVentas);
     }
-    
+
     document.getElementById('aplicar-filtros-btn')?.addEventListener('click', aplicarFiltros);
     document.getElementById('limpiar-filtros-btn')?.addEventListener('click', limpiarFiltros);
     document.getElementById('filtro-cliente')?.addEventListener('input', aplicarFiltros);
     document.getElementById('filtro-producto')?.addEventListener('input', aplicarFiltros);
     document.getElementById('filtro-fecha-desde')?.addEventListener('change', aplicarFiltros);
     document.getElementById('filtro-fecha-hasta')?.addEventListener('change', aplicarFiltros);
-    
+
     document.getElementById('cerrar-modal')?.addEventListener('click', cerrarModal);
     document.getElementById('modal-detalle')?.addEventListener('click', (e) => {
         if (e.target.id === 'modal-detalle') cerrarModal();
     });
 }
 
-window.aplicarFiltros = function() {
+window.aplicarFiltros = function () {
     const filtroCliente = document.getElementById('filtro-cliente')?.value.toLowerCase().trim() || '';
     const filtroProducto = document.getElementById('filtro-producto')?.value.toLowerCase().trim() || '';
     const fechaDesde = document.getElementById('filtro-fecha-desde')?.value || '';
     const fechaHasta = document.getElementById('filtro-fecha-hasta')?.value || '';
-    
+
     ventasFiltradas = ventasOriginales.filter(venta => {
         if (filtroCliente && !String(venta.cliente).toLowerCase().includes(filtroCliente)) return false;
         if (filtroProducto && !venta.productos.some(p => String(p.nombre).toLowerCase().includes(filtroProducto))) return false;
@@ -70,17 +73,17 @@ window.aplicarFiltros = function() {
         if (fechaHasta && venta.fecha > fechaHasta) return false;
         return true;
     });
-    
+
     mostrarVentas();
     actualizarContador();
 }
 
-window.limpiarFiltros = function() {
+window.limpiarFiltros = function () {
     document.getElementById('filtro-cliente').value = '';
     document.getElementById('filtro-producto').value = '';
     document.getElementById('filtro-fecha-desde').value = '';
     document.getElementById('filtro-fecha-hasta').value = '';
-    
+
     cargarVentas();
     window.aplicarFiltros();
 }
@@ -92,22 +95,22 @@ function actualizarContador() {
 function mostrarVentas() {
     const tbody = document.getElementById('tabla-historial');
     const estadoVacio = document.getElementById('estado-vacio');
-    
+
     if (ventasFiltradas.length === 0) {
         tbody.innerHTML = '';
         estadoVacio.classList.remove('hidden');
         return;
     }
-    
+
     estadoVacio.classList.add('hidden');
-    
+
     // Ordenar por fecha y hora (más recientes primero)
     const ventasOrdenadas = ventasFiltradas.sort((a, b) => {
         const fechaA = new Date(a.fecha + 'T' + (a.hora || '00:00'));
         const fechaB = new Date(b.fecha + 'T' + (b.hora || '00:00'));
         return fechaB - fechaA;
     });
-    
+
     tbody.innerHTML = ventasOrdenadas.map(venta => `
         <tr class="hover:bg-gray-50 transition-colors">
             <td class="px-6 py-4 whitespace-nowrap">
@@ -152,7 +155,7 @@ function mostrarVentas() {
 function verDetalle(ventaId) {
     const venta = ventasFiltradas.find(v => v.id == ventaId);
     if (!venta) return;
-    
+
     const contenido = document.getElementById('contenido-detalle');
     contenido.innerHTML = `
         <div class="space-y-6">
@@ -209,11 +212,11 @@ function verDetalle(ventaId) {
             <!-- Total -->
             <div class="bg-bocettos-primary p-4 rounded-lg text-white text-center">
                 <div class="text-sm opacity-90">Total de la Venta</div>
-                <div class="text-2xl font-bold">$${formatearNumero(venta.total)}</div>
+                <div class="text-2xl font-bold">S/ ${formatearNumero(venta.total)}</div>
             </div>
         </div>
     `;
-    
+
     document.getElementById('modal-detalle').classList.remove('hidden');
 }
 

@@ -1,11 +1,13 @@
+// Formulario de Registro de Ventas
+// Permite agregar múltiples productos y calcular totales
 let productos = [];
 let total = 0;
 let contadorProductos = 0;
 
-window.addEventListener('load', function() {
+window.addEventListener('load', function () {
     verificarAutenticacion();
     inicializarFormulario();
-    agregarPrimerProducto();
+    agregarPrimerProducto(); // Añadir campo inicial de producto
 });
 
 function verificarAutenticacion() {
@@ -33,7 +35,7 @@ function agregarProducto() {
     contadorProductos++;
     const productoId = `producto-${contadorProductos}`;
     const mostrarBotonEliminar = contadorProductos > 1;
-    
+
     const botonEliminarHTML = mostrarBotonEliminar ? `
         <button type="button" onclick="eliminarProducto('${productoId}')" class="w-full btn-eliminar text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 flex items-center justify-center space-x-1">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -42,7 +44,7 @@ function agregarProducto() {
             <span>Eliminar</span>
         </button>
     ` : '';
-    
+
     document.getElementById('productos-container').insertAdjacentHTML('beforeend', `
         <div id="${productoId}" class="grid grid-cols-1 md:grid-cols-7 gap-4 items-end p-4 bg-gray-50 rounded-lg border border-gray-200">
             <div class="md:col-span-2">
@@ -106,7 +108,7 @@ function actualizarBotonesEliminar() {
 function calcularSubtotal(productoId) {
     const producto = document.getElementById(productoId);
     if (!producto) return;
-    
+
     const cantidad = parseFloat(producto.querySelector('[name="producto-cantidad"]').value) || 0;
     const precio = parseFloat(producto.querySelector('[name="producto-precio"]').value) || 0;
     producto.querySelector('[name="producto-subtotal"]').value = formatearMoneda(cantidad * precio);
@@ -134,7 +136,7 @@ function guardarVenta() {
     const canalVenta = document.getElementById('canal-venta').value;
     const tipoEntrega = document.getElementById('tipo-entrega').value;
     const tipoComprobante = document.getElementById('tipo-comprobante').value;
-    
+
     if (!cliente) return mostrarNotificacion('❌ El nombre del cliente es obligatorio', 'error');
     if (!telefono) return mostrarNotificacion('❌ El teléfono es obligatorio', 'error');
     if (!email) return mostrarNotificacion('❌ El correo electrónico es obligatorio', 'error');
@@ -143,52 +145,52 @@ function guardarVenta() {
     if (!canalVenta) return mostrarNotificacion('❌ Debe seleccionar el canal de venta', 'error');
     if (!tipoEntrega) return mostrarNotificacion('❌ Debe seleccionar el tipo de entrega', 'error');
     if (!tipoComprobante) return mostrarNotificacion('❌ Debe seleccionar el tipo de comprobante', 'error');
-    
+
     const ahora = new Date();
     const hora = `${String(ahora.getHours()).padStart(2, '0')}:${String(ahora.getMinutes()).padStart(2, '0')}`;
-    
+
     const venta = {
         id: Date.now(),
         fecha: document.getElementById('fecha-venta').value,
         hora: hora,
-        cliente, 
+        cliente,
         telefono,
         email,
         direccion,
-        vendedor, 
-        canalVenta, 
-        tipoEntrega, 
+        vendedor,
+        canalVenta,
+        tipoEntrega,
         tipoComprobante,
         codigoTracking: document.getElementById('codigo-tracking').value.trim(),
         observaciones: document.getElementById('observaciones').value.trim(),
         productos: [],
         total: 0
     };
-    
+
     document.querySelectorAll('[name="producto-nombre"]').forEach(producto => {
         const contenedor = producto.closest('.grid');
         if (!contenedor) return;
-        
+
         const nombre = producto.value.trim();
         const cantidad = parseFloat(contenedor.querySelector('[name="producto-cantidad"]').value) || 0;
         const precio = parseFloat(contenedor.querySelector('[name="producto-precio"]').value) || 0;
         const metodoPago = contenedor.querySelector('[name="producto-metodo-pago"]').value;
         const subtotal = cantidad * precio;
-        
+
         if (nombre && cantidad && precio && metodoPago) {
             venta.productos.push({ nombre, cantidad, precio, metodoPago, subtotal });
             venta.total += subtotal;
         }
     });
-    
+
     if (venta.productos.length === 0) {
         return mostrarNotificacion('❌ Debe agregar al menos un producto completo', 'error');
     }
-    
+
     const ventas = JSON.parse(localStorage.getItem('bocettos_ventas') || '[]');
     ventas.push(venta);
     localStorage.setItem('bocettos_ventas', JSON.stringify(ventas));
-    
+
     Swal.fire({
         title: '¡Venta guardada!',
         text: '¿Desea limpiar el formulario para una nueva venta?',
@@ -202,7 +204,7 @@ function guardarVenta() {
         if (result.isConfirmed) {
             ['cliente', 'telefono', 'email', 'direccion', 'canal-venta', 'tipo-entrega', 'tipo-comprobante', 'codigo-tracking', 'observaciones']
                 .forEach(campo => document.getElementById(campo).value = '');
-            
+
             document.getElementById('productos-container').innerHTML = '';
             contadorProductos = 0;
             agregarPrimerProducto();
@@ -215,7 +217,7 @@ function mostrarNotificacion(mensaje, tipo = 'info') {
     notificacion.className = 'text-white px-6 py-3 rounded-lg shadow-lg transform translate-x-full transition-transform duration-300';
     notificacion.style.backgroundColor = '#4a4a4b';
     notificacion.textContent = mensaje;
-    
+
     document.getElementById('notification-container').appendChild(notificacion);
     setTimeout(() => notificacion.classList.remove('translate-x-full'), 100);
     setTimeout(() => {

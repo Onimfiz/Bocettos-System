@@ -1,8 +1,43 @@
-#login-btn:hover{background-color:#3a3a3b!important}
-.logo-bocettos{display:block;max-width:100%;height:auto;background:transparent;border:none;outline:none}
-.logo-blend{mix-blend-mode:multiply;opacity:.95}
-#admin-btn:hover,#logout-btn:hover{background-color:#3a3a3b!important}
-.btn-eliminar{background-color:#4a4a4b!important}
-.btn-eliminar:hover{background-color:#3a3a3b!important}
-.caja-total{background:linear-gradient(to right,#4a4a4b,#5a5a5c)!important}
-.logo-bocettos-white{background:transparent;border-radius:8px;padding:8px}
+/* Estilos personalizados - Sistema BOCETTOS */
+
+#login-btn:hover {
+    background-color: #3a3a3b !important
+}
+
+.logo-bocettos {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    background: transparent;
+    border: none;
+    outline: none
+}
+
+.logo-blend {
+    mix-blend-mode: multiply;
+    opacity: .95
+}
+
+#admin-btn:hover,
+#logout-btn:hover {
+    background-color: #3a3a3b !important
+}
+
+/* Botones de eliminación */
+.btn-eliminar {
+    background-color: #4a4a4b !important
+}
+
+.btn-eliminar:hover {
+    background-color: #3a3a3b !important
+}
+
+.caja-total {
+    background: linear-gradient(to right, #4a4a4b, #5a5a5c) !important
+}
+
+.logo-bocettos-white {
+    background: transparent;
+    border-radius: 8px;
+    padding: 8px
+}

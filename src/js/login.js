@@ -19,7 +19,7 @@ function verificarSesionActiva() {
 
 function manejarLogin(e) {
     e.preventDefault();
-    
+
     const username = document.getElementById('username').value.trim();
     const password = document.getElementById('password').value;
     const loginBtn = document.getElementById('login-btn');
@@ -37,7 +37,7 @@ function manejarLogin(e) {
 
     setTimeout(() => {
         const usuario = USUARIOS.find(u => u.username === username && u.password === password);
-        
+
         if (usuario) {
             localStorage.setItem('bocettos_usuario', JSON.stringify({
                 username: usuario.username,
@@ -45,7 +45,7 @@ function manejarLogin(e) {
                 rol: usuario.rol,
                 loginTime: new Date().toISOString()
             }));
-            
+
             mostrarExito('¡Bienvenido ' + usuario.nombre + '!');
             setTimeout(() => window.location.href = 'src/formulario-ventas.html', 1500);
         } else {
@@ -60,7 +60,7 @@ function manejarLogin(e) {
 function mostrarError(mensaje) {
     const errorMsg = document.getElementById('error-message');
     const errorText = document.getElementById('error-text');
-    
+
     if (errorMsg && errorText) {
         errorText.textContent = mensaje;
         errorMsg.classList.remove('hidden');
@@ -71,7 +71,7 @@ function mostrarError(mensaje) {
 function mostrarExito(mensaje) {
     const successMsg = document.getElementById('success-message');
     const successText = document.getElementById('success-text');
-    
+
     if (successMsg && successText) {
         successText.textContent = mensaje;
         successMsg.classList.remove('hidden');
@@ -79,7 +79,7 @@ function mostrarExito(mensaje) {
     }
 }
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     inicializarPantallaCarga();
     verificarSesionActiva();
     document.getElementById('login-form')?.addEventListener('submit', manejarLogin);
